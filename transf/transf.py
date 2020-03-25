@@ -1,48 +1,39 @@
 #!/usr/bin/env python
 import math
 import functools
+import numpy as np
 
 class Transformation:
 
     def compose(self, f, g):
-        print("scale:")
-        print(self.scale)
-        print("shift:")
-        print(self.shift)
-        print("f:")
-        print(f)
-        print("g:")
-        print(g)
-        compose = lambda x: g(f(x))
-        return compose
+        func = lambda x: f(g(x))
+        return func
+
+    def __matmul__(self, *functions):
+        #print("matmul")
+        #print("__matmul__", functions)
+        composed = functools.reduce(self.compose, functions, self)
+        #print("composed:", composed)
+        return composed
 
 
 class Scaling(Transformation):
     def __init__(self, scale):
         Transformation.__init__(self)
-        Transformation.scale = scale
+        self.scale = scale
 
-    def __call__(Transformation, p):
+    def __call__(self, p):
         x, y = p
-        return [x*Transformation.scale, y*Transformation.scale]
-
-    def __matmul__(self, *functions):
-
-        composed = functools.reduce(self.compose, functions, lambda x: x)
-        return composed
-
+        return [x*self.scale, y*self.scale]
 
 class Translation(Transformation):
     def __init__(self, shift):
         Transformation.__init__(self)
-        Transformation.shift = shift
+        self.shift = shift
 
-    def __call__(Transformation, p):
-        return [x + y for x, y in zip(p, Transformation.shift)]
+    def __call__(self, p):
+        return [x + y for x, y in zip(p, self.shift)]
 
-    def __matmul__(self, *functions):
-        composed = functools.reduce(self.compose, functions, lambda x: x)
-        return composed
 
 class Rotation(Transformation):
     def __init__(self, angle):

@@ -23,35 +23,23 @@ assert isinstance(rotation, Transformation)
 # `rotation` acts on a point by rotation by given `angle` around the origin
 assert np.allclose(rotation([1, 0]), [1/2, 3**(1/2) / 2])
 # We can compose any transformations
-print("scaling(translation(p))")
-print(scaling(translation(p)))
-#composed = scaling @ translation
 composed = scaling @ translation
-print("composed(p):")
-print(composed(p))
-print("scaling(p):")
-print(scaling(p))
-print("translation(p):")
-print(translation(p))
-
 assert np.allclose(composed(p), scaling(translation(p)))
 # A transformation has an attribute `matrix` that returns the corresponding affine
-'''
-matrix of shape `[3, 3]`
-assert np.allclose(
-composed.matrix,
+# matrix of shape `[3, 3]`
+assert np.allclose(composed.matrix,
 np.array([[3., 0., 3.],
 [0., 3., 6.],
 [0., 0., 1.]])
 )
 # However the `matrix` attribute is not writeable:
 try:
-composed.matrix = np.eye(3)
+    composed.matrix = np.eye(3)
 except Exception:
-pass # the code has raised an exception as expected
+    pass # the code has raised an exception as expected
 else:
-raise Exception("The code should have raised an exception but it did not!")
-
+    raise Exception("The code should have raised an exception but it did not!")
+'''
 # transformations can be used as context managers using special function
 `transform` as in the following example
 from homework.transformations import transform
