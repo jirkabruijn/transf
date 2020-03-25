@@ -3,40 +3,55 @@ import math
 import functools
 
 class Transformation:
-    def __int__(self):
-        self.nothing = 0
+    def __init__(self, scale=0, shift=None, angle=0):
+        self.scale = scale
+        self.shift = shift
+        self.angle = angle
 
-    def compose(*functions):
+    '''def __matmul__(self, *functions):
         def compose2(f, g):
             return lambda x: f(g(x))
 
+        return functools.reduce(compose2, functions, lambda x: x)'''
+
+    def __matmul__(self, *functions):
+        def compose2(f, g):
+            #compose = lambda f, g: (lambda x: f(g(x)))
+            print("scale:")
+            print(self.scale)
+            print("shift:")
+            print(self.shift)
+            print("shift:")
+            self.shift = [1, 2]
+            print(self.shift)
+            print(f)
+            print(g)
+            compose = lambda x: f(g(x))
+            return compose
+
         return functools.reduce(compose2, functions, lambda x: x)
 
-class Scaling(Transformation):
-    def __init__(self, scale=0):
-        Transformation.__init__(self)
-        self.scale = scale
+    '''def __matmul__(self, *functions):
+        return Compose(functions(lambda x: x))'''
 
-    def __call__(self, p):
+
+
+class Scaling(Transformation):
+
+    def __call__(Transformation, p):
         x, y = p
-        return [x*self.scale, y*self.scale]
+        return [x*Transformation.scale, y*Transformation.scale]
 
 
 class Translation(Transformation):
-    def __init__(self, shift):
-        Transformation.__init__(self)
-        self.shift = shift
 
-    def __call__(self, p):
-        return [x + y for x, y in zip(p, self.shift)]
+    def __call__(Transformation, p):
+        return [x + y for x, y in zip(p, Transformation.shift)]
 
 class Rotation(Transformation):
-    def __init__(self, angle=0):
-        Transformation.__init__(self)
-        self.angle = angle
 
-    def __call__(self, p):
-        return self.rotate(p,[0,0],self.angle)
+    def __call__(Transformation, p):
+        return Transformation.rotate(p,[0,0],Transformation.angle)
 
     def rotate(self, origin, point, angle):
         #this one i had to look up:
@@ -49,3 +64,12 @@ class Rotation(Transformation):
         return qx, qy
 
 
+'''class Compose(object):
+    def __init__(self, func):
+        self.func = func
+
+    def __call__(self, x):
+        return self.func(x)
+
+    def __mul__(self, neighbour):
+        return Compose(lambda x: self.func(neighbour.func(x)))'''

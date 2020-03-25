@@ -24,14 +24,18 @@ assert isinstance(rotation, Transformation)
 assert np.allclose(rotation([1, 0]), [1/2, 3**(1/2) / 2])
 # We can compose any transformations
 print(scaling(translation(p)))
-#composed = scaling @ translation
 composed = scaling @ translation
-#composed = scaling.compose(translation)
-
+print(composed(p))
 '''
+composed = translation @ scaling
+print(composed(p))
+composed = scaling @ scaling
+print(composed(p))
+print(scaling.__matmul__(translation))'''
+
 assert np.allclose(composed(p), scaling(translation(p)))
 # A transformation has an attribute `matrix` that returns the corresponding affine
-
+'''
 matrix of shape `[3, 3]`
 assert np.allclose(
 composed.matrix,
