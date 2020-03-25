@@ -23,15 +23,16 @@ assert isinstance(rotation, Transformation)
 # `rotation` acts on a point by rotation by given `angle` around the origin
 assert np.allclose(rotation([1, 0]), [1/2, 3**(1/2) / 2])
 # We can compose any transformations
+print("scaling(translation(p))")
 print(scaling(translation(p)))
+#composed = scaling @ translation
 composed = scaling @ translation
+print("composed(p):")
 print(composed(p))
-'''
-composed = translation @ scaling
-print(composed(p))
-composed = scaling @ scaling
-print(composed(p))
-print(scaling.__matmul__(translation))'''
+print("scaling(p):")
+print(scaling(p))
+print("translation(p):")
+print(translation(p))
 
 assert np.allclose(composed(p), scaling(translation(p)))
 # A transformation has an attribute `matrix` that returns the corresponding affine
