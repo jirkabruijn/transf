@@ -27,38 +27,21 @@ composed = scaling @ translation
 assert np.allclose(composed(p), scaling(translation(p)))
 # A transformation has an attribute `matrix` that returns the corresponding affine
 # matrix of shape `[3, 3]`
-a = np.array([1,2])
-b = np.array([[3],[4]])
-c = a @ b
-print("a:", a)
-print("b:",b)
-print("c:",c)
 print("translation.matrix")
 print(translation.matrix)
 print("scaling.matrix")
 print(scaling.matrix)
-print(scaling.matrix.T)
+#print(scaling.matrix.T)
 print("scaling.matrix @ translation.matrix")
 print(scaling.matrix * translation.matrix)
-test = translation.matrix.reshape((2,1))
-print("test")
-print(test)
-print("scaling.matrix @ test")
-print(scaling.matrix * test)
-print("na")
-na = np.array([[3., 0., 3.],
-[0., 3., 6.],
-[0., 0., 1.]])
-print(na)
+print("translation.matrix @ scaling.matrix")
+print(translation.matrix * scaling.matrix)
 
-#print("composed.matrix")
-#print(composed.matrix)
+print("scaling.matrix * np.transpose(translation.matrix))")
+print(scaling.matrix * np.transpose(translation.matrix))
 
-
-
-
-
-exit()
+print("composed.matrix")
+print(composed.matrix)
 
 assert np.allclose(composed.matrix,
 np.array([[3., 0., 3.],
