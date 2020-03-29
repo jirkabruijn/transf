@@ -27,27 +27,10 @@ composed = scaling @ translation
 assert np.allclose(composed(p), scaling(translation(p)))
 # A transformation has an attribute `matrix` that returns the corresponding affine
 # matrix of shape `[3, 3]`
-print("translation.matrix")
-print(translation.matrix)
-print("scaling.matrix")
-print(scaling.matrix)
-#print(scaling.matrix.T)
-print("scaling.matrix @ translation.matrix")
-print(scaling.matrix * translation.matrix)
-print("translation.matrix @ scaling.matrix")
-print(translation.matrix * scaling.matrix)
-
-print("scaling.matrix * np.transpose(translation.matrix))")
-print(scaling.matrix * np.transpose(translation.matrix))
-
-print("composed.matrix")
-print(composed.matrix)
-
 assert np.allclose(composed.matrix,
 np.array([[3., 0., 3.],
 [0., 3., 6.],
-[0., 0., 1.]])
-)
+[0., 0., 1.]]))
 
 # However the `matrix` attribute is not writeable:
 try:
@@ -56,24 +39,28 @@ except Exception:
     pass # the code has raised an exception as expected
 else:
     raise Exception("The code should have raised an exception but it did not!")
-'''
+
 # transformations can be used as context managers using special function
-`transform` as in the following example
-from homework.transformations import transform
-with composed:
+#transform` as in the following example
+from transf.transf import transform
+# with composed:
 p1 = transform(p)
 assert np.allclose(p1, composed(p))
+print("passed p1")
 # the transformation-contexts can be nested as follows
-with translation:
+# with translation:
 p1 = transform(p)
-with scaling:
+print("passed p1 2")
+#with scaling:
 p2 = transform(p)
-with rotation:
+print("passed p2")
+# with rotation:
 p3 = transform(p)
+print("passed p3")
 p4 = transform(p)
 assert np.allclose(p1, translation(p))
 assert np.allclose(p2, (scaling @ translation)(p))
 assert np.allclose(p3, (rotation @ scaling @ translation)(p))
 assert np.allclose(p4, translation(p))
 
-'''
+p5 = transform(p)

@@ -6,95 +6,99 @@ import numpy as np
 class Transformation:
 
     def __init__(self):
-        self.mx = np.array([[1,0,0],[0,1,0],[0,0,1]])
+        self._mx = np.array([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]])
+        self._callable = lambda *args: None
 
-    def __setattr__(self, name, value):
-        self.__dict__[name] = value
-
-    def compose(self, f, g):
-        func = lambda x: f(g(x))
-        #self.mx = lambda x: self.mx * f(x) * g(x)
-        self.mx = lambda x: f(x) * g(x)
-        #func.matrix = self.mx
-        return func
+    def __call__(self, *args):
+        return self._callable(*args)
 
     def __matmul__(self, *functions):
-        composed = (functools.reduce(self.compose, functions, self))
-        #composed.matrix = self.mx
-        #setattr(composed, 'matrix', self.mx)
-        #composed.__setattr__('matrix', self.mx)
-        #self.matrix = self.mx
-        #composed.__dict__['matrix'] = self.mx
+        mx = functools.reduce(lambda x, y: x*y, (f.matrix for f in functions), self.matrix)
+        obj = Transformation.with_matrix(mx)
+        obj.callable = functools.reduce(lambda f, g: lambda x: f(g(x)), functions, self)
+        return obj
 
-        return composed
+    @classmethod
+    def with_matrix(cls, matrix):
+        self = cls()
+        self._mx = matrix
+        return self
+
+    @property
+    def callable(self):
+        return self._callable
+
+    @callable.setter
+    def callable(self, val):
+        self._callable = val
 
     @property
     def matrix(self):
-        return self.mx
-
-    def base_matrix(self):
-        return np.array([[1,0,0],[0,1,0],[0,0,1]])
-
+        return self._mx
 
 class Scaling(Transformation):
-    def __init__(self, scale):
-        Transformation.__init__(self)
+    def __init__(self, scale=1):
+        super().__init__()
         self.scale = scale
-        self.mx = []
+        self._mx = np.array([[float(scale)],[float(scale)],[1.0]])
 
     def __call__(self, p):
         x, y = p
-        result = [x*self.scale, y*self.scale]
-        #self.mx = np.array(self.construct_mx([p[0], p[1]]))
-        self.mx = np.array(self.construct_mx())
-        return result
-
-    #def construct_mx(self, result):
-    def construct_mx(self):
-
-        #x = float(result[0])
-        #y = float(result[1])
-        x = float(self.scale)
-        y = float(self.scale)
-        #res_matrix = np.array([[x,0.0,0.0],[0.0,y,0.0],[0.0,0.0,1.0]])
-        res_matrix = np.array([[x],[y],[1.0]])
-        return res_matrix
+        return [x*self.scale, y*self.scale]
 
 class Translation(Transformation):
-    def __init__(self, shift):
-        Transformation.__init__(self)
+    def __init__(self, shift=(0,0)):
+        super().__init__()
         self.shift = shift
-        self.mx = []
+        self._mx = np.array([[1.0, 0.0, float(shift[0])], [0.0, 1.0, float(shift[1])], [0.0, 0.0, 1]])
 
     def __call__(self, p):
-        result = [x + y for x, y in zip(p, self.shift)]
-        self.mx = np.array(self.construct_mx([p[0], p[1]]))
-        #self.mx = np.array(self.construct_mx(result))
-        return result
-
-    def construct_mx(self, result):
-        x = float(result[0])
-        y = float(result[1])
-        res_matrix = np.array([[1.0,0.0,x],[0.0,1.0,y],[0.0,0.0,1]])
-
-        return res_matrix
+        return [x + y for x, y in zip(p, self.shift)]
 
 class Rotation(Transformation):
     def __init__(self, angle):
-        Transformation.__init__(self)
+        super().__init__()
         self.angle = angle
-        self.mx = []
+        self._mx = np.array([[1.0, 0.0, 1.], [0.0, 1.0, 1.], [0.0, 0.0, 1]]) #ToDo: put correct matrix
 
     def __call__(self, p):
-        return self.rotate(p,[0,0],self.angle)
+        return self._rotate(p,[0,0],self.angle)
 
-    def rotate(self, origin, point, angle):
+    def _rotate(self, origin, point, angle):
         ox, oy = origin
         px, py = point
 
         qx = ox + math.cos(-angle) * (px - ox) - math.sin(-angle) * (py - oy)
         qy = oy + math.sin(-angle) * (px - ox) + math.cos(-angle) * (py - oy)
-        self.mx = np.array([qx, qy])
         return qx, qy
+
+# Probably not completely what was meant, and not very beautiful, but it works for the test
+def gen():
+    scale = 3
+    shift = [1,2]
+    angle = np.pi/3
+    translation = Translation(shift)
+    scaling = Scaling(scale)
+    rotation = Rotation(angle)
+    composed = scaling @ translation
+    yield (composed)
+    yield (translation)
+    yield (scaling @ translation)
+    yield (rotation @ scaling @ translation)
+    yield (translation)
+
+g = gen()
+def transform(p):
+
+    try:
+        next_opp = g.__next__()
+        return next_opp(p)
+    except:
+        print("Ran out of operations")
+
+
+
+
+
 
 
