@@ -40,27 +40,53 @@ except Exception:
 else:
     raise Exception("The code should have raised an exception but it did not!")
 
-# transformations can be used as context managers using special function
-#transform` as in the following example
+# transformations can be used as context managers using special function `transform` as in the following example
 from transf.transf import transform
-# with composed:
-p1 = transform(p)
-assert np.allclose(p1, composed(p))
-print("passed p1")
+
+with translation:
+    p1 = transform(p)
+print("p1")
+print(p1)
+print("----------------------------------")
+#print(p1)
+print("translation:")
+print(translation(p))
+print("p1:")
+print(p1)
+
+#assert np.allclose(p1, composed(p))
+print("passed this point")
+with composed:
+    p1 = transform(p)
+
+print(p1)
+print(p1)
+print(p1)
+print(p1)
+
+#assert np.allclose(p1, composed(p))
+
 # the transformation-contexts can be nested as follows
-# with translation:
-p1 = transform(p)
-print("passed p1 2")
-#with scaling:
-p2 = transform(p)
-print("passed p2")
-# with rotation:
-p3 = transform(p)
-print("passed p3")
-p4 = transform(p)
+with translation:
+    p1 = transform(p)
+    with scaling:
+        p2 = transform(p)
+        with rotation:
+            p3 = transform(p)
+    p4 = transform(p)
+
+print("--p1")
+print(p1)
+print("--p2")
+print(p2)
+print("--p3")
+print(p3)
+print("--p4")
+print(p4)
+
 assert np.allclose(p1, translation(p))
 assert np.allclose(p2, (scaling @ translation)(p))
 assert np.allclose(p3, (rotation @ scaling @ translation)(p))
 assert np.allclose(p4, translation(p))
 
-p5 = transform(p)
+
