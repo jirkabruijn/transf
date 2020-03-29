@@ -3,8 +3,6 @@
 from setuptools import setup
 exec(open('transf/version.py').read())
 
-REQUIRES = ['numpy']
-
 setup(
     name = 'transf',
     version=__version__,
@@ -14,6 +12,5 @@ setup(
     author_email = 'jirka.bruijn@gmail.com',
     license = 'unlicensed',
     packages=['transf'],
-    zip_safe=False,
-    install_requires=REQUIRES
+    zip_safe=False
 )
