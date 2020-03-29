@@ -9,7 +9,7 @@ REQUIRES = ['setuptools',
             'functools']
 setup(
     name = 'transf',
-    version=__version__,
+    version='0.0.1',
     description = 'A test concerning transformations',
     url = 'https://github.com/jirkabruijn/transf.git',
     author = 'Jiri Bruijn',
