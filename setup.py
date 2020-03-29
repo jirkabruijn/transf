@@ -3,7 +3,8 @@
 from setuptools import setup
 exec(open('transf/version.py').read())
 
-REQUIRES = ['numpy',
+REQUIRES = ['setuptools',
+            'numpy',
             'math',
             'functools']
 setup(
