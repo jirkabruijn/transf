@@ -3,13 +3,11 @@
 from setuptools import setup
 exec(open('transf/version.py').read())
 
-REQUIRES = ['setuptools',
-            'numpy',
-            'math',
-            'functools']
+REQUIRES = ['numpy']
+
 setup(
     name = 'transf',
-    version='0.0.1',
+    version=__version__,
     description = 'A test concerning transformations',
     url = 'https://github.com/jirkabruijn/transf.git',
     author = 'Jiri Bruijn',

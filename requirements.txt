@@ -1,4 +1,1 @@
-setuptools
 numpy
-math
-functools
